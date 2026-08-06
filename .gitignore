@@ -1,0 +1,18 @@
+# Build folders
+[Bb]in/
+[Oo]bj/
+[Log]/
+
+# Visual Studio files
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Rider / IntelliJ files
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db

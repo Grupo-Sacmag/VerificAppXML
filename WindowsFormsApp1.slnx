@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="VerificaXML/VerificaXML.vdproj" Type="Installer" />
+  <Project Path="WindowsFormsApp1/WindowsFormsApp1.csproj" Id="fa79a495-cc22-4446-9459-8112e5932f7b" />
+</Solution>
