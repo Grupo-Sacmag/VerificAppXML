@@ -138,7 +138,7 @@ namespace WindowsFormsApp1
                     progressBar1.Value = Math.Min(100, Math.Max(0, porcentaje));
                 });
 
-                List<ResultadoValidacion> resultados;-
+                List<ResultadoValidacion> resultados;
                 if (esModoPila)
                 {
                     resultados = await _validador.ProcesarPilaAsync(rutaCarpeta, progreso);
@@ -275,6 +275,18 @@ namespace WindowsFormsApp1
             {
                 frm.ShowDialog(this);
             }
+        }
+
+        private void btnArreglarFallos_Click(object sender, EventArgs e)
+        {
+        }
+
+        private void btnSeleccionarExcel_Click(object sender, EventArgs e)
+        {
+        }
+
+        private void btnComparar_Click(object sender, EventArgs e)
+        {
         }
     }
 }

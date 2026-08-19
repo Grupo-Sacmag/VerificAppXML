@@ -17,6 +17,12 @@ namespace WindowsFormsApp1
     public class ResultadoValidacion
     {
         public string NombreArchivo { get; set; }
+        public string NombreCarpeta { get; set; }
+        public string TextoXmlCrudo { get; set; }
+        public string RutaXml { get; set; }
+        public string Sello { get; set; }
+        public string Certificado { get; set; }
+        public string FragmentoError { get; set; }
         public string UUID { get; set; }
         public string FormaPago { get; set; }
         public string MetodoPago { get; set; }
@@ -101,6 +107,46 @@ namespace WindowsFormsApp1
                     StringComparer.OrdinalIgnoreCase
                 );
             }
+        }
+
+        public async Task<List<ResultadoValidacion>> ProcesarPilaAsync(string rutaCarpeta, IProgress<int> progreso = null)
+        {
+            if (!Directory.Exists(rutaCarpeta))
+                throw new DirectoryNotFoundException($"La carpeta no existe: {rutaCarpeta}");
+
+            // Cargar pdfs de todas las subcarpetas para el modo Pila
+            _archivosPdfExistentes = new HashSet<string>(
+                Directory.EnumerateFiles(rutaCarpeta, "*.*", SearchOption.AllDirectories)
+                    .Where(f => f.EndsWith(".pdf", StringComparison.OrdinalIgnoreCase))
+                    .Select(Path.GetFileNameWithoutExtension),
+                StringComparer.OrdinalIgnoreCase
+            );
+
+            var archivosXml = Directory.EnumerateFiles(rutaCarpeta, "*.*", SearchOption.AllDirectories)
+                .Where(f => f.EndsWith(".xml", StringComparison.OrdinalIgnoreCase)).ToList();
+
+            var resultados = new List<ResultadoValidacion>();
+            int procesados = 0;
+
+            await Task.Run(() =>
+            {
+                foreach (var rutaXml in archivosXml)
+                {
+                    var res = ValidarArchivoConDiagnostico(rutaXml);
+                    lock (resultados)
+                    {
+                        resultados.Add(res);
+                    }
+                    procesados++;
+                    if (archivosXml.Count > 0)
+                    {
+                        int porcentaje = (procesados * 100) / archivosXml.Count;
+                        progreso?.Report(porcentaje);
+                    }
+                }
+            });
+
+            return resultados;
         }
 
         public async Task<List<ResultadoValidacion>> ProcesarCarpetaAsync(string rutaCarpeta, IProgress<int> progreso = null)

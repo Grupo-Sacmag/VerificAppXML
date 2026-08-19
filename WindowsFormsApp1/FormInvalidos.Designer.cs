@@ -1,4 +1,4 @@
-namespace WindowsFormsApp1a1
+namespace WindowsFormsApp1
 {
     partial class FormInvalidos
     {
