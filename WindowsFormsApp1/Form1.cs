@@ -16,11 +16,16 @@ namespace WindowsFormsApp1
         private AntigravityXmlValidator _validador;
         private int _indiceAnteriorCombo = 0;
         private List<ResultadoValidacion> _ultimosResultados = new List<ResultadoValidacion>();
+        private GridFiltroColumnas<ResultadoValidacion> _filtroValidas;
+        private GridFiltroColumnas<ResultadoValidacion> _filtroInvalidas;
 
         public Form1()
         {
             InitializeComponent();
             _validador = new AntigravityXmlValidator();
+
+            _filtroValidas = new GridFiltroColumnas<ResultadoValidacion>(gridValidas, panelFiltrosValidas);
+            _filtroInvalidas = new GridFiltroColumnas<ResultadoValidacion>(gridInvalidas, panelFiltrosInvalidas);
 
             if (comboBox1.Items.Count > 0)
             {
@@ -155,8 +160,8 @@ namespace WindowsFormsApp1
                 var invalidas = resultados.Where(r => r.EsValido != "SÍ").ToList();
 
                 // Asignar fuentes de datos a los DataGridViews
-                gridValidas.DataSource = validas;
-                gridInvalidas.DataSource = invalidas;
+                _filtroValidas.EstablecerDatos(validas);
+                _filtroInvalidas.EstablecerDatos(invalidas);
 
                 AjustarFormatoGrid(gridValidas);
                 AjustarFormatoGrid(gridInvalidas);
@@ -240,6 +245,68 @@ namespace WindowsFormsApp1
                 grid.Columns["DetalleError"].HeaderText = "Detalle Técnico";
                 grid.Columns["DetalleError"].Width = 450;
             }
+            if (grid.Columns["Moneda"] != null)
+            {
+                grid.Columns["Moneda"].HeaderText = "Moneda";
+                grid.Columns["Moneda"].Width = 70;
+            }
+            if (grid.Columns["Subtotal"] != null)
+            {
+                grid.Columns["Subtotal"].HeaderText = "Subtotal";
+                grid.Columns["Subtotal"].Width = 110;
+                grid.Columns["Subtotal"].DefaultCellStyle.Format = "N2";
+                grid.Columns["Subtotal"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
+            }
+            if (grid.Columns["Descuento"] != null)
+            {
+                grid.Columns["Descuento"].HeaderText = "Descuento";
+                grid.Columns["Descuento"].Width = 100;
+                grid.Columns["Descuento"].DefaultCellStyle.Format = "N2";
+                grid.Columns["Descuento"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
+                grid.Columns["Descuento"].DefaultCellStyle.NullValue = "—";
+            }
+            if (grid.Columns["IVA"] != null)
+            {
+                grid.Columns["IVA"].HeaderText = "IVA";
+                grid.Columns["IVA"].Width = 100;
+                grid.Columns["IVA"].DefaultCellStyle.Format = "N2";
+                grid.Columns["IVA"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
+                grid.Columns["IVA"].DefaultCellStyle.NullValue = "—";
+            }
+            if (grid.Columns["ImpuestosTrasladados"] != null)
+            {
+                grid.Columns["ImpuestosTrasladados"].HeaderText = "Imp. Trasladados";
+                grid.Columns["ImpuestosTrasladados"].Width = 120;
+                grid.Columns["ImpuestosTrasladados"].DefaultCellStyle.Format = "N2";
+                grid.Columns["ImpuestosTrasladados"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
+                grid.Columns["ImpuestosTrasladados"].DefaultCellStyle.NullValue = "—";
+            }
+            if (grid.Columns["ImpuestosRetenidos"] != null)
+            {
+                grid.Columns["ImpuestosRetenidos"].HeaderText = "Imp. Retenidos";
+                grid.Columns["ImpuestosRetenidos"].Width = 120;
+                grid.Columns["ImpuestosRetenidos"].DefaultCellStyle.Format = "N2";
+                grid.Columns["ImpuestosRetenidos"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
+                grid.Columns["ImpuestosRetenidos"].DefaultCellStyle.NullValue = "—";
+            }
+            if (grid.Columns["Total"] != null)
+            {
+                grid.Columns["Total"].HeaderText = "Total";
+                grid.Columns["Total"].Width = 110;
+                grid.Columns["Total"].DefaultCellStyle.Format = "N2";
+                grid.Columns["Total"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
+            }
+            if (grid.Columns["Serie"] != null) { grid.Columns["Serie"].HeaderText = "Serie"; grid.Columns["Serie"].Width = 70; }
+            if (grid.Columns["Folio"] != null) { grid.Columns["Folio"].HeaderText = "Folio"; grid.Columns["Folio"].Width = 90; }
+            if (grid.Columns["Fecha"] != null) { grid.Columns["Fecha"].HeaderText = "Fecha Emisión"; grid.Columns["Fecha"].Width = 140; }
+            if (grid.Columns["RfcEmisor"] != null) { grid.Columns["RfcEmisor"].HeaderText = "RFC Emisor"; grid.Columns["RfcEmisor"].Width = 110; }
+            if (grid.Columns["NombreEmisor"] != null) { grid.Columns["NombreEmisor"].HeaderText = "Nombre Emisor"; grid.Columns["NombreEmisor"].Width = 220; }
+            if (grid.Columns["RfcReceptor"] != null) { grid.Columns["RfcReceptor"].HeaderText = "RFC Receptor"; grid.Columns["RfcReceptor"].Width = 110; }
+            if (grid.Columns["UsoCFDI"] != null) { grid.Columns["UsoCFDI"].HeaderText = "Uso CFDI"; grid.Columns["UsoCFDI"].Width = 90; }
+            if (grid.Columns["ConceptosDescripcion"] != null) { grid.Columns["ConceptosDescripcion"].HeaderText = "Conceptos"; grid.Columns["ConceptosDescripcion"].Width = 350; }
+            if (grid.Columns["NumConceptos"] != null) { grid.Columns["NumConceptos"].HeaderText = "# Conceptos"; grid.Columns["NumConceptos"].Width = 90; }
+            if (grid.Columns["LugarExpedicion"] != null) { grid.Columns["LugarExpedicion"].HeaderText = "C.P. Expedición"; grid.Columns["LugarExpedicion"].Width = 100; }
+            if (grid.Columns["CondicionesDePago"] != null) { grid.Columns["CondicionesDePago"].HeaderText = "Condiciones Pago"; grid.Columns["CondicionesDePago"].Width = 150; }
         }
 
         private void detallesToolStripMenuItem_Click(object sender, EventArgs e)
@@ -283,10 +350,76 @@ namespace WindowsFormsApp1
 
         private void btnSeleccionarExcel_Click(object sender, EventArgs e)
         {
+            using (var ofd = new OpenFileDialog { Filter = "Archivos Excel (*.xlsx)|*.xlsx" })
+            {
+                if (ofd.ShowDialog() == DialogResult.OK)
+                {
+                    txtRutaExcel.Text = ofd.FileName;
+                    lblEstado.Text = $"Excel seleccionado: {Path.GetFileName(ofd.FileName)}";
+                }
+            }
         }
 
         private void btnComparar_Click(object sender, EventArgs e)
         {
+            if (_ultimosResultados == null || _ultimosResultados.Count == 0)
+            {
+                MessageBox.Show("No hay resultados de validación cargados. Ejecute una validación primero.", "Sin datos", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            var fuentes = new List<(string NombreFuente, string RutaExcel)>();
+
+            if (!string.IsNullOrWhiteSpace(txtRutaExcel.Text) && File.Exists(txtRutaExcel.Text))
+                fuentes.Add(("Excel 1: " + Path.GetFileName(txtRutaExcel.Text), txtRutaExcel.Text));
+
+            if (!string.IsNullOrWhiteSpace(txtRutaExcel2.Text) && File.Exists(txtRutaExcel2.Text))
+                fuentes.Add(("Excel 2: " + Path.GetFileName(txtRutaExcel2.Text), txtRutaExcel2.Text));
+
+            if (fuentes.Count == 0)
+            {
+                MessageBox.Show("Seleccione al menos un archivo Excel válido antes de comparar.", "Excel no seleccionado", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            try
+            {
+                var comparacion = ExcelComparador.Comparar(_ultimosResultados, fuentes);
+                using (var frm = new FormComparacion(comparacion))
+                {
+                    frm.ShowDialog(this);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error al comparar contra el Excel: {ex.Message}", "Error de Comparación", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void tsAuditoria_Click(object sender, EventArgs e)
+        {
+            if (_ultimosResultados == null || _ultimosResultados.Count == 0)
+            {
+                MessageBox.Show("No hay resultados cargados. Ejecute una validación primero.", "Sin datos", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            using (var frm = new FormAuditoria(_ultimosResultados))
+            {
+                frm.ShowDialog(this);
+            }
+        }
+
+        private void btnSeleccionarExcel2_Click(object sender, EventArgs e)
+        {
+            using (var ofd = new OpenFileDialog { Filter = "Archivos Excel (*.xlsx)|*.xlsx" })
+            {
+                if (ofd.ShowDialog() == DialogResult.OK)
+                {
+                    txtRutaExcel2.Text = ofd.FileName;
+                    lblEstado.Text = $"Excel 2 seleccionado: {Path.GetFileName(ofd.FileName)}";
+                }
+            }
         }
     }
 }

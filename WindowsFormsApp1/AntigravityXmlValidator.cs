@@ -30,6 +30,38 @@ namespace WindowsFormsApp1
         public string TienePdf { get; set; }
         public string Diagnostico { get; set; }
         public string DetalleError { get; set; }
+        public string Moneda { get; set; }
+        public decimal? Subtotal { get; set; }
+        public decimal? Descuento { get; set; }
+        public decimal? IVA { get; set; }              // traslado de IVA específico (el más común)
+        public decimal? ImpuestosTrasladados { get; set; }
+        public decimal? ImpuestosRetenidos { get; set; }
+        public decimal? Total { get; set; }
+        public string CriterioAplicado { get; set; }   // "INCLUIDO" / "EXCLUIDO (motivo corto)"
+        public string Justificacion { get; set; }      // explicación completa, legible para auditoría
+        public bool? IncluidoPorRegla { get; set; }     // null = decidido por el flujo normal; true/false = forzado por una regla explícita
+        public string Serie { get; set; }
+        public string Folio { get; set; }
+        public string Fecha { get; set; }
+        public string LugarExpedicion { get; set; }
+        public string Exportacion { get; set; }
+        public string CondicionesDePago { get; set; }
+        public string TipoDeComprobante { get; set; }
+        public string RfcEmisor { get; set; }
+        public string NombreEmisor { get; set; }
+        public string RegimenFiscalEmisor { get; set; }
+        public string RfcReceptor { get; set; }
+        public string NombreReceptor { get; set; }
+        public string UsoCFDI { get; set; }
+        public string ConceptosDescripcion { get; set; }
+        public int NumConceptos { get; set; }
+    }
+
+    public class ReglaFiltroUUID
+    {
+        public string Patron { get; set; }   // subcadena a buscar dentro del UUID (ej. "199B5")
+        public bool Incluir { get; set; }    // true = forzar inclusión, false = forzar exclusión
+        public string Motivo { get; set; }   // justificación de negocio, se muestra en la auditoría
     }
 
     public class HttpUserAgentResolver : XmlUrlResolver
@@ -183,7 +215,72 @@ namespace WindowsFormsApp1
             return resultados;
         }
 
+        private void AplicarReglasFiltro(ResultadoValidacion r)
+        {
+            if (string.IsNullOrEmpty(r.UUID) || ReglasFiltro == null || ReglasFiltro.Count == 0)
+                return;
+
+            foreach (var regla in ReglasFiltro)
+            {
+                if (string.IsNullOrEmpty(regla.Patron)) continue;
+
+                if (r.UUID.IndexOf(regla.Patron, StringComparison.OrdinalIgnoreCase) >= 0)
+                {
+                    r.CriterioAplicado = regla.Incluir ? "INCLUSIÓN EXPLÍCITA (regla)" : "EXCLUSIÓN EXPLÍCITA (regla)";
+                    r.Justificacion = $"Regla de negocio aplicada: UUID contiene '{regla.Patron}'. {regla.Motivo}";
+                    r.IncluidoPorRegla = regla.Incluir;
+                    return;
+                }
+            }
+        }
+
+        private void GenerarJustificacionAutomatica(ResultadoValidacion r)
+        {
+            if (r.EsValido == "SÍ")
+            {
+                r.CriterioAplicado = "INCLUIDO";
+                r.Justificacion = "Firma digital verificada contra el certificado del emisor; PDF correlacionado presente.";
+            }
+            else if (r.TienePdf != null && r.TienePdf.StartsWith("NO"))
+            {
+                r.CriterioAplicado = "EXCLUIDO (Inconsistencia documental)";
+                r.Justificacion = "Firma válida, pero no se localizó el PDF correlacionado en la carpeta; no se considera completo para trazabilidad.";
+            }
+            else
+            {
+                r.CriterioAplicado = "EXCLUIDO (Falla de validación)";
+                r.Justificacion = $"{r.Diagnostico} — {r.DetalleError}";
+            }
+        }
+
         private ResultadoValidacion ValidarArchivoConDiagnostico(string rutaXml)
+        {
+            ResultadoValidacion resultado;
+            try
+            {
+                resultado = ValidarArchivoInterno(rutaXml);
+            }
+            catch (Exception ex)
+            {
+                // Cualquier excepción no prevista al procesar ESTE archivo se aísla aquí:
+                // se reporta como inválido/corrupto, pero el resto del lote sigue procesándose.
+                resultado = new ResultadoValidacion
+                {
+                    NombreArchivo = Path.GetFileName(rutaXml),
+                    RutaXml = rutaXml,
+                    TienePdf = "NO (Inconsistencia)",
+                    EsValido = "NO",
+                    Diagnostico = "🔴 ERROR INESPERADO AL PROCESAR EL ARCHIVO",
+                    DetalleError = $"{ex.GetType().Name}: {ex.Message}"
+                };
+            }
+
+            GenerarJustificacionAutomatica(resultado);
+            AplicarReglasFiltro(resultado);
+            return resultado;
+        }
+
+        private ResultadoValidacion ValidarArchivoInterno(string rutaXml)
         {
             string nombreArchivoSinExt = Path.GetFileNameWithoutExtension(rutaXml);
             string nombreArchivo = Path.GetFileName(rutaXml);
@@ -236,6 +333,28 @@ namespace WindowsFormsApp1
             resultado.UUID = string.IsNullOrEmpty(datos.UUID) ? "SIN_UUID" : datos.UUID;
             resultado.FormaPago = string.IsNullOrEmpty(datos.FormaPago) ? "N/A" : datos.FormaPago;
             resultado.MetodoPago = string.IsNullOrEmpty(datos.MetodoPago) ? "N/A" : datos.MetodoPago;
+            resultado.Moneda = string.IsNullOrEmpty(datos.Moneda) ? "N/A" : datos.Moneda;
+            resultado.Subtotal = datos.SubTotal;
+            resultado.Descuento = datos.Descuento;
+            resultado.Total = datos.Total;
+            resultado.ImpuestosTrasladados = datos.TotalImpuestosTrasladados;
+            resultado.ImpuestosRetenidos = datos.TotalImpuestosRetenidos;
+            resultado.IVA = datos.TrasladosPorImpuesto.TryGetValue("IVA", out decimal ivaValor) ? ivaValor : (decimal?)null;
+            resultado.Serie = datos.Serie;
+            resultado.Folio = datos.Folio;
+            resultado.Fecha = datos.Fecha;
+            resultado.LugarExpedicion = datos.LugarExpedicion;
+            resultado.Exportacion = datos.Exportacion;
+            resultado.CondicionesDePago = datos.CondicionesDePago;
+            resultado.TipoDeComprobante = datos.TipoDeComprobante;
+            resultado.RfcEmisor = datos.RfcEmisor;
+            resultado.NombreEmisor = datos.NombreEmisor;
+            resultado.RegimenFiscalEmisor = datos.RegimenFiscalEmisor;
+            resultado.RfcReceptor = datos.RfcReceptor;
+            resultado.NombreReceptor = datos.NombreReceptor;
+            resultado.UsoCFDI = datos.UsoCFDI;
+            resultado.ConceptosDescripcion = datos.ConceptosDescripcion;
+            resultado.NumConceptos = datos.NumConceptos;
 
             // Paso 2: Generar cadena original y verificar firma
             string cadenaOriginal;
@@ -328,16 +447,54 @@ namespace WindowsFormsApp1
         {
             try
             {
-                using (var fs = new FileStream(rutaXml, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-                using (var sr = new StreamReader(fs, Encoding.UTF8, true))
-                {
-                    return sr.ReadToEnd();
-                }
+                byte[] bytes = File.ReadAllBytes(rutaXml);
+                if (bytes.Length == 0) return "";
+
+                Encoding encoding = DetectarCodificacion(bytes);
+                string texto = encoding.GetString(bytes);
+
+                // Si quedó un BOM como carácter dentro del string, se descarta.
+                if (texto.Length > 0 && texto[0] == '\uFEFF')
+                    texto = texto.Substring(1);
+
+                return texto;
             }
             catch
             {
                 return "";
             }
+        }
+
+        // Detecta la codificación real del archivo: primero por BOM explícito,
+        // y si no hay BOM, por el patrón de bytes 0x00 típico de UTF-16 sin BOM
+        // (causa más común del error "carácter 0x00 no válido" en CFDIs).
+        private Encoding DetectarCodificacion(byte[] bytes)
+        {
+            if (bytes.Length >= 3 && bytes[0] == 0xEF && bytes[1] == 0xBB && bytes[2] == 0xBF)
+                return Encoding.UTF8;
+            if (bytes.Length >= 2 && bytes[0] == 0xFF && bytes[1] == 0xFE)
+                return Encoding.Unicode;          // UTF-16 LE
+            if (bytes.Length >= 2 && bytes[0] == 0xFE && bytes[1] == 0xFF)
+                return Encoding.BigEndianUnicode; // UTF-16 BE
+
+            int limite = Math.Min(bytes.Length, 200);
+            int cerosEnParidad0 = 0;
+            int cerosEnParidad1 = 0;
+            for (int i = 0; i < limite; i++)
+            {
+                if (bytes[i] == 0x00)
+                {
+                    if (i % 2 == 0) cerosEnParidad0++;
+                    else cerosEnParidad1++;
+                }
+            }
+
+            if (cerosEnParidad1 > limite / 4)
+                return Encoding.Unicode;          // patrón típico de UTF-16 LE sin BOM
+            if (cerosEnParidad0 > limite / 4)
+                return Encoding.BigEndianUnicode; // patrón típico de UTF-16 BE sin BOM
+
+            return Encoding.UTF8;
         }
 
         private CfdiData ExtraerDatosDesdeTextoXml(string xmlTexto)
@@ -350,24 +507,117 @@ namespace WindowsFormsApp1
                 {
                     if (reader.NodeType == XmlNodeType.Element)
                     {
-                        if (reader.LocalName == "Comprobante" &&
-                            (reader.NamespaceURI == "http://www.sat.gob.mx/cfd/4" || reader.NamespaceURI == "http://www.sat.gob.mx/cfd/3"))
+                        if (reader.LocalName == "Comprobante" && (reader.NamespaceURI == "http://www.sat.gob.mx/cfd/4" || reader.NamespaceURI == "http://www.sat.gob.mx/cfd/3"))
                         {
                             datos.Version = reader.GetAttribute("Version") ?? "";
                             datos.Sello = reader.GetAttribute("Sello") ?? "";
                             datos.Certificado = reader.GetAttribute("Certificado") ?? "";
                             datos.FormaPago = reader.GetAttribute("FormaPago") ?? "";
                             datos.MetodoPago = reader.GetAttribute("MetodoPago") ?? "";
+                            datos.Moneda = reader.GetAttribute("Moneda") ?? "";
+                            datos.SubTotal = ParsearDecimalSeguro(reader.GetAttribute("SubTotal"));
+                            datos.Descuento = ParsearDecimalSeguro(reader.GetAttribute("Descuento"));
+                            datos.Total = ParsearDecimalSeguro(reader.GetAttribute("Total"));
+                            datos.Serie = reader.GetAttribute("Serie") ?? "";
+                            datos.Folio = reader.GetAttribute("Folio") ?? "";
+                            datos.Fecha = reader.GetAttribute("Fecha") ?? "";
+                            datos.LugarExpedicion = reader.GetAttribute("LugarExpedicion") ?? "";
+                            datos.Exportacion = reader.GetAttribute("Exportacion") ?? "";
+                            datos.CondicionesDePago = reader.GetAttribute("CondicionesDePago") ?? "";
+                            datos.TipoDeComprobante = reader.GetAttribute("TipoDeComprobante") ?? "";
                         }
                         else if (reader.LocalName == "TimbreFiscalDigital" &&
                                  reader.NamespaceURI == "http://www.sat.gob.mx/TimbreFiscalDigital")
                         {
                             datos.UUID = reader.GetAttribute("UUID") ?? "";
                         }
+                        else if (reader.LocalName == "Impuestos")
+                        {
+                            // Solo nos interesa el nodo Impuestos de nivel Comprobante (totales),
+                            // no los que puedan aparecer a nivel Concepto.
+                            string totTraslados = reader.GetAttribute("TotalImpuestosTrasladados");
+                            string totRetenidos = reader.GetAttribute("TotalImpuestosRetenidos");
+
+                            if (totTraslados != null)
+                                datos.TotalImpuestosTrasladados = ParsearDecimalSeguro(totTraslados);
+                            if (totRetenidos != null)
+                                datos.TotalImpuestosRetenidos = ParsearDecimalSeguro(totRetenidos);
+                        }
+                        else if (reader.LocalName == "Traslado")
+                        {
+                            string impuesto = reader.GetAttribute("Impuesto") ?? "";
+                            decimal? importe = ParsearDecimalSeguro(reader.GetAttribute("Importe"));
+                            string nombreImpuesto = MapearClaveImpuesto(impuesto);
+
+                            if (!string.IsNullOrEmpty(nombreImpuesto) && importe.HasValue)
+                            {
+                                if (datos.TrasladosPorImpuesto.ContainsKey(nombreImpuesto))
+                                    datos.TrasladosPorImpuesto[nombreImpuesto] += importe.Value;
+                                else
+                                    datos.TrasladosPorImpuesto[nombreImpuesto] = importe.Value;
+                            }
+                        }
+                        else if (reader.LocalName == "Retencion")
+                        {
+                            string impuesto = reader.GetAttribute("Impuesto") ?? "";
+                            decimal? importe = ParsearDecimalSeguro(reader.GetAttribute("Importe"));
+                            string nombreImpuesto = MapearClaveImpuesto(impuesto);
+
+                            if (!string.IsNullOrEmpty(nombreImpuesto) && importe.HasValue)
+                            {
+                                if (datos.RetencionesPorImpuesto.ContainsKey(nombreImpuesto))
+                                    datos.RetencionesPorImpuesto[nombreImpuesto] += importe.Value;
+                                else
+                                    datos.RetencionesPorImpuesto[nombreImpuesto] = importe.Value;
+                            }
+                        }
+                        else if (reader.LocalName == "Emisor")
+                        {
+                            datos.RfcEmisor = reader.GetAttribute("Rfc") ?? "";
+                            datos.NombreEmisor = reader.GetAttribute("Nombre") ?? "";
+                            datos.RegimenFiscalEmisor = reader.GetAttribute("RegimenFiscal") ?? "";
+                        }
+                        else if (reader.LocalName == "Receptor")
+                        {
+                            datos.RfcReceptor = reader.GetAttribute("Rfc") ?? "";
+                            datos.NombreReceptor = reader.GetAttribute("Nombre") ?? "";
+                            datos.UsoCFDI = reader.GetAttribute("UsoCFDI") ?? "";
+                            datos.RegimenFiscalReceptor = reader.GetAttribute("RegimenFiscalReceptor") ?? "";
+                            datos.DomicilioFiscalReceptor = reader.GetAttribute("DomicilioFiscalReceptor") ?? "";
+                        }
+                        else if (reader.LocalName == "Concepto")
+                        {
+                            datos.NumConceptos++;
+                            string desc = reader.GetAttribute("Descripcion") ?? "";
+                            if (!string.IsNullOrEmpty(desc))
+                                datos.ConceptosDescripcion = string.IsNullOrEmpty(datos.ConceptosDescripcion) ? desc : datos.ConceptosDescripcion + " | " + desc;
+                        }
                     }
                 }
             }
             return datos;
+        }
+
+        // El SAT usa claves numéricas para el catálogo c_Impuesto: 001=ISR, 002=IVA, 003=IEPS
+        private string MapearClaveImpuesto(string clave)
+        {
+            if (string.IsNullOrWhiteSpace(clave)) return "";
+
+            switch (clave.Trim())
+            {
+                case "001": return "ISR";
+                case "002": return "IVA";
+                case "003": return "IEPS";
+                default: return clave.Trim(); // por si ya viene como texto (CFDI 3.3 antiguos, casos atípicos)
+            }
+        }
+
+        private decimal? ParsearDecimalSeguro(string valor)
+        {
+            if (string.IsNullOrWhiteSpace(valor)) return null;
+            if (decimal.TryParse(valor, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out decimal resultado))
+                return resultado;
+            return null;
         }
 
         private string GenerarCadenaOriginalDesdeTextoXml(string xmlTexto)
@@ -437,6 +687,8 @@ namespace WindowsFormsApp1
                 return false;
             }
         }
+
+        public List<ReglaFiltroUUID> ReglasFiltro { get; set; } = new List<ReglaFiltroUUID>();
     }
 
     public class CfdiData
@@ -447,5 +699,32 @@ namespace WindowsFormsApp1
         public string FormaPago { get; set; } = "";
         public string MetodoPago { get; set; } = "";
         public string UUID { get; set; } = "";
+        public string Moneda { get; set; } = "";
+        public decimal? SubTotal { get; set; }
+        public decimal? Descuento { get; set; }
+        public decimal? Total { get; set; }
+        public decimal? TotalImpuestosTrasladados { get; set; }
+        public decimal? TotalImpuestosRetenidos { get; set; }
+        public string Serie { get; set; } = "";
+        public string Folio { get; set; } = "";
+        public string Fecha { get; set; } = "";
+        public string LugarExpedicion { get; set; } = "";
+        public string Exportacion { get; set; } = "";
+        public string CondicionesDePago { get; set; } = "";
+        public string TipoDeComprobante { get; set; } = "";
+        public string RfcEmisor { get; set; } = "";
+        public string NombreEmisor { get; set; } = "";
+        public string RegimenFiscalEmisor { get; set; } = "";
+        public string RfcReceptor { get; set; } = "";
+        public string NombreReceptor { get; set; } = "";
+        public string UsoCFDI { get; set; } = "";
+        public string RegimenFiscalReceptor { get; set; } = "";
+        public string DomicilioFiscalReceptor { get; set; } = "";
+        public string ConceptosDescripcion { get; set; } = "";
+        public int NumConceptos { get; set; } = 0;
+
+        // Desglose detallado por tipo de impuesto (ej. "IVA", "ISR", "IEPS")
+        public Dictionary<string, decimal> TrasladosPorImpuesto { get; set; } = new Dictionary<string, decimal>(StringComparer.OrdinalIgnoreCase);
+        public Dictionary<string, decimal> RetencionesPorImpuesto { get; set; } = new Dictionary<string, decimal>(StringComparer.OrdinalIgnoreCase);
     }
 }
