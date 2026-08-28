@@ -1,18 +1,84 @@
-# Build folders
-[Bb]in/
-[Oo]bj/
-[Log]/
+Git Ignore para VB6 / VS
 
-# Visual Studio files
+# =========================================================
+# Visual Basic 6
+# =========================================================
+
+# Archivos temporales / usuario
+*.vbw
+*.vbg.user
+*.scc
+*.tmp
+*.temp
+*.bak
+*.old
+*.log
+*.SCC
+*.PDM
+*.GID
+*.HLP.log
+
+# Archivos generados durante compilación
+*.exe
+*.dll
+*.ocx
+*.pdb
+*.ilk
+*.exp
+*.lib
+*.obj
+*.cab
+*.CAB
+*.pdm
+*.PDM
+*.zip
+SETUP.LST
+setup.exe
+
+# Directorios de compilación
+bin/
+obj/
+Debug/
+Release/
+Support/
+
+# =========================================================
+# Visual Studio / editores modernos
+# =========================================================
+
 .vs/
-*.user
-*.suo
-*.userosscache
-*.sln.docstates
-
-# Rider / IntelliJ files
+.vscode/
 .idea/
 
-# OS files
-.DS_Store
+# =========================================================
+# Windows
+# =========================================================
+
 Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+MSSCCPRJ.SCC
+
+# =========================================================
+# Archivos de sistema / temporales
+# =========================================================
+
+*.swp
+*.swo
+*~
+*.~??
+
+# =========================================================
+# Archivos comprimidos
+# =========================================================
+.zip
+.rar
+
+# =========================================================
+# Archivos de caché e información de controles de VB6
+# =========================================================
+*.oca
+*.dca
+
