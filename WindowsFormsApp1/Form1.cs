@@ -277,6 +277,14 @@ namespace WindowsFormsApp1
             }
         }
 
+        private void conciliacionCsvToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            using (var frm = new FormConciliacionCsv())
+            {
+                frm.ShowDialog(this);
+            }
+        }
+
         private void btnArreglarFallos_Click(object sender, EventArgs e)
         {
         }

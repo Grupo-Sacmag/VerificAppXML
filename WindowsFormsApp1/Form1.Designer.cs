@@ -33,6 +33,8 @@ namespace WindowsFormsApp1
             this.verToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.detallesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.invalidosToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.conciliacionCsvToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.panelTop = new System.Windows.Forms.Panel();
             this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.btnSeleccionarCarpeta = new System.Windows.Forms.Button();
@@ -79,7 +81,9 @@ namespace WindowsFormsApp1
             // 
             this.verToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.detallesToolStripMenuItem,
-            this.invalidosToolStripMenuItem});
+            this.invalidosToolStripMenuItem,
+            this.toolStripSeparator1,
+            this.conciliacionCsvToolStripMenuItem});
             this.verToolStripMenuItem.Name = "verToolStripMenuItem";
             this.verToolStripMenuItem.Size = new System.Drawing.Size(44, 24);
             this.verToolStripMenuItem.Text = "Ver";
@@ -87,16 +91,28 @@ namespace WindowsFormsApp1
             // detallesToolStripMenuItem
             // 
             this.detallesToolStripMenuItem.Name = "detallesToolStripMenuItem";
-            this.detallesToolStripMenuItem.Size = new System.Drawing.Size(151, 26);
+            this.detallesToolStripMenuItem.Size = new System.Drawing.Size(320, 26);
             this.detallesToolStripMenuItem.Text = "Detalles";
             this.detallesToolStripMenuItem.Click += new System.EventHandler(this.detallesToolStripMenuItem_Click);
             // 
             // invalidosToolStripMenuItem
             // 
             this.invalidosToolStripMenuItem.Name = "invalidosToolStripMenuItem";
-            this.invalidosToolStripMenuItem.Size = new System.Drawing.Size(151, 26);
+            this.invalidosToolStripMenuItem.Size = new System.Drawing.Size(320, 26);
             this.invalidosToolStripMenuItem.Text = "Inválidos";
             this.invalidosToolStripMenuItem.Click += new System.EventHandler(this.invalidosToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(317, 6);
+            // 
+            // conciliacionCsvToolStripMenuItem
+            // 
+            this.conciliacionCsvToolStripMenuItem.Name = "conciliacionCsvToolStripMenuItem";
+            this.conciliacionCsvToolStripMenuItem.Size = new System.Drawing.Size(320, 26);
+            this.conciliacionCsvToolStripMenuItem.Text = "Conciliación Estado de Cuenta (CSV)...";
+            this.conciliacionCsvToolStripMenuItem.Click += new System.EventHandler(this.conciliacionCsvToolStripMenuItem_Click);
             // 
             // panelTop
             // 
@@ -268,9 +284,6 @@ namespace WindowsFormsApp1
             this.splitContainer1.Panel2.Controls.Add(this.gridInvalidas);
             this.splitContainer1.Panel2.Controls.Add(this.lblInvalidas);
             this.splitContainer1.Panel2.Padding = new System.Windows.Forms.Padding(12, 0, 12, 6);
-            this.splitContainer1.Size = new System.Drawing.Size(1478, 638);
-            this.splitContainer1.SplitterDistance = 311;
-            this.splitContainer1.TabIndex = 3;
             // 
             // gridValidas
             // 
@@ -381,6 +394,8 @@ namespace WindowsFormsApp1
         private System.Windows.Forms.ToolStripMenuItem detallesToolStripMenuItem;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.ToolStripMenuItem invalidosToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.ToolStripMenuItem conciliacionCsvToolStripMenuItem;
         private System.Windows.Forms.Button btnArreglarFallos;
         private System.Windows.Forms.Label lblExcel;
         private System.Windows.Forms.Button btnSeleccionarExcel;

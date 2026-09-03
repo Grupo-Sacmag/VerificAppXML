@@ -66,6 +66,12 @@
     <Compile Include="FormInvalidos.Designer.cs">
       <DependentUpon>FormInvalidos.cs</DependentUpon>
     </Compile>
+    <Compile Include="FormConciliacionCsv.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormConciliacionCsv.Designer.cs">
+      <DependentUpon>FormConciliacionCsv.cs</DependentUpon>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="AntigravityXmlValidator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
