@@ -20,6 +20,7 @@ namespace WindowsFormsApp1
             this.panelTop = new System.Windows.Forms.Panel();
             this.lblTitulo = new System.Windows.Forms.Label();
             this.btnSeleccionarCsv = new System.Windows.Forms.Button();
+            this.btnSeleccionarCarpetaEdoCta = new System.Windows.Forms.Button();
             this.txtRutaCsv = new System.Windows.Forms.TextBox();
             this.btnSeleccionarCarpetaXml = new System.Windows.Forms.Button();
             this.txtRutaCarpetaXml = new System.Windows.Forms.TextBox();
@@ -61,6 +62,7 @@ namespace WindowsFormsApp1
             this.panelTop.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panelTop.Controls.Add(this.lblTitulo);
             this.panelTop.Controls.Add(this.btnSeleccionarCsv);
+            this.panelTop.Controls.Add(this.btnSeleccionarCarpetaEdoCta);
             this.panelTop.Controls.Add(this.txtRutaCsv);
             this.panelTop.Controls.Add(this.btnSeleccionarCarpetaXml);
             this.panelTop.Controls.Add(this.txtRutaCarpetaXml);
@@ -92,11 +94,24 @@ namespace WindowsFormsApp1
             this.btnSeleccionarCsv.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.btnSeleccionarCsv.Location = new System.Drawing.Point(17, 43);
             this.btnSeleccionarCsv.Name = "btnSeleccionarCsv";
-            this.btnSeleccionarCsv.Size = new System.Drawing.Size(220, 30);
+            this.btnSeleccionarCsv.Size = new System.Drawing.Size(108, 30);
             this.btnSeleccionarCsv.TabIndex = 1;
-            this.btnSeleccionarCsv.Text = "📁 Seleccionar CSV (Estado Cuenta)";
+            this.btnSeleccionarCsv.Text = "📄 PDF / CSV";
             this.btnSeleccionarCsv.UseVisualStyleBackColor = false;
             this.btnSeleccionarCsv.Click += new System.EventHandler(this.btnSeleccionarCsv_Click);
+            // 
+            // btnSeleccionarCarpetaEdoCta
+            // 
+            this.btnSeleccionarCarpetaEdoCta.BackColor = System.Drawing.Color.White;
+            this.btnSeleccionarCarpetaEdoCta.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.btnSeleccionarCarpetaEdoCta.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.btnSeleccionarCarpetaEdoCta.Location = new System.Drawing.Point(130, 43);
+            this.btnSeleccionarCarpetaEdoCta.Name = "btnSeleccionarCarpetaEdoCta";
+            this.btnSeleccionarCarpetaEdoCta.Size = new System.Drawing.Size(107, 30);
+            this.btnSeleccionarCarpetaEdoCta.TabIndex = 2;
+            this.btnSeleccionarCarpetaEdoCta.Text = "📁 Carpeta Edo.";
+            this.btnSeleccionarCarpetaEdoCta.UseVisualStyleBackColor = false;
+            this.btnSeleccionarCarpetaEdoCta.Click += new System.EventHandler(this.btnSeleccionarCarpetaEdoCta_Click);
             // 
             // txtRutaCsv
             // 
@@ -404,6 +419,7 @@ namespace WindowsFormsApp1
         private System.Windows.Forms.Panel panelTop;
         private System.Windows.Forms.Label lblTitulo;
         private System.Windows.Forms.Button btnSeleccionarCsv;
+        private System.Windows.Forms.Button btnSeleccionarCarpetaEdoCta;
         private System.Windows.Forms.TextBox txtRutaCsv;
         private System.Windows.Forms.Button btnSeleccionarCarpetaXml;
         private System.Windows.Forms.TextBox txtRutaCarpetaXml;

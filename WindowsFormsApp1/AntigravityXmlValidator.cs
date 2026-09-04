@@ -114,16 +114,13 @@ namespace WindowsFormsApp1
             if (!Directory.Exists(rutaCarpeta))
                 throw new DirectoryNotFoundException($"La carpeta no existe: {rutaCarpeta}");
 
-            // Cargar pdfs de todas las subcarpetas para el modo Pila
+            // Cargar pdfs y xmls de todas las subcarpetas de manera segura y recursiva
+            ObtenerArchivosRecursivosSeguros(rutaCarpeta, out var archivosPdf, out var archivosXml);
+
             _archivosPdfExistentes = new HashSet<string>(
-                Directory.EnumerateFiles(rutaCarpeta, "*.*", SearchOption.AllDirectories)
-                    .Where(f => f.EndsWith(".pdf", StringComparison.OrdinalIgnoreCase))
-                    .Select(Path.GetFileNameWithoutExtension),
+                archivosPdf.Select(Path.GetFileNameWithoutExtension),
                 StringComparer.OrdinalIgnoreCase
             );
-
-            var archivosXml = Directory.EnumerateFiles(rutaCarpeta, "*.*", SearchOption.AllDirectories)
-                .Where(f => f.EndsWith(".xml", StringComparison.OrdinalIgnoreCase)).ToList();
 
             var resultados = new List<ResultadoValidacion>();
             int procesados = 0;
@@ -183,16 +180,60 @@ namespace WindowsFormsApp1
             return resultados;
         }
 
+        private static void ObtenerArchivosRecursivosSeguros(string rutaRaiz, out List<string> archivosPdf, out List<string> archivosXml)
+        {
+            archivosPdf = new List<string>();
+            archivosXml = new List<string>();
+
+            if (string.IsNullOrEmpty(rutaRaiz) || !Directory.Exists(rutaRaiz))
+                return;
+
+            var pila = new Stack<string>();
+            pila.Push(rutaRaiz);
+
+            while (pila.Count > 0)
+            {
+                string dirActual = pila.Pop();
+
+                // 1. Obtener archivos de la carpeta actual con protección
+                try
+                {
+                    var archivos = Directory.GetFiles(dirActual, "*.*", SearchOption.TopDirectoryOnly);
+                    foreach (var arch in archivos)
+                    {
+                        if (arch.EndsWith(".xml", StringComparison.OrdinalIgnoreCase))
+                            archivosXml.Add(arch);
+                        else if (arch.EndsWith(".pdf", StringComparison.OrdinalIgnoreCase))
+                            archivosPdf.Add(arch);
+                    }
+                }
+                catch { }
+
+                // 2. Encolar subcarpetas para explorarlas una a una con protección
+                try
+                {
+                    var subdirs = Directory.GetDirectories(dirActual);
+                    foreach (var s in subdirs)
+                    {
+                        pila.Push(s);
+                    }
+                }
+                catch { }
+            }
+        }
+
         private ResultadoValidacion ValidarArchivoConDiagnostico(string rutaXml)
         {
             string nombreArchivoSinExt = Path.GetFileNameWithoutExtension(rutaXml);
             string nombreArchivo = Path.GetFileName(rutaXml);
+            string nombreCarpeta = Path.GetFileName(Path.GetDirectoryName(rutaXml)) ?? "";
 
             bool tienePdf = _archivosPdfExistentes.Contains(nombreArchivoSinExt);
 
             var resultado = new ResultadoValidacion
             {
                 NombreArchivo = nombreArchivo,
+                NombreCarpeta = nombreCarpeta,
                 TienePdf = tienePdf ? "SÍ" : "NO (Inconsistencia)"
             };
 
