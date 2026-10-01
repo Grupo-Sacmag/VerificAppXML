@@ -16,6 +16,8 @@ namespace WindowsFormsApp1
         {
             InitializeComponent();
             _listaResultados = resultados ?? new List<ResultadoValidacion>();
+            FormConciliacionCsv.HabilitarDobleBuffer(gridXmls);
+            TemaGamerEmpresarial.AplicarTema(this);
             CargarGrid();
         }
 

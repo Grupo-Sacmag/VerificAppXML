@@ -19,6 +19,8 @@ namespace WindowsFormsApp1
             _listaInvalidos = resultados != null 
                 ? resultados.Where(r => r.EsValido != "SÍ").ToList() 
                 : new List<ResultadoValidacion>();
+            FormConciliacionCsv.HabilitarDobleBuffer(gridInvalidos);
+            TemaGamerEmpresarial.AplicarTema(this);
             CargarGrid();
         }
 

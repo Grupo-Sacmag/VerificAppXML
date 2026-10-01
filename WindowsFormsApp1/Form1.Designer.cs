@@ -35,16 +35,18 @@ namespace WindowsFormsApp1
             this.invalidosToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.conciliacionCsvToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.ayudaToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.buscarActualizacionesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.panelTop = new System.Windows.Forms.Panel();
             this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.btnSeleccionarCarpeta = new System.Windows.Forms.Button();
             this.txtRutaCarpeta = new System.Windows.Forms.TextBox();
-            this.btnArreglarFallos = new System.Windows.Forms.Button();
             this.btnIniciar = new System.Windows.Forms.Button();
             this.lblExcel = new System.Windows.Forms.Label();
             this.btnSeleccionarExcel = new System.Windows.Forms.Button();
             this.txtRutaExcel = new System.Windows.Forms.TextBox();
             this.btnComparar = new System.Windows.Forms.Button();
+            this.btnArreglarFallos = new System.Windows.Forms.Button();
             this.panelBottom = new System.Windows.Forms.Panel();
             this.lblEstado = new System.Windows.Forms.Label();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
@@ -70,10 +72,11 @@ namespace WindowsFormsApp1
             // 
             this.menuStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.verToolStripMenuItem});
+            this.verToolStripMenuItem,
+            this.ayudaToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(1478, 38);
+            this.menuStrip1.Size = new System.Drawing.Size(1182, 28);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -91,28 +94,43 @@ namespace WindowsFormsApp1
             // detallesToolStripMenuItem
             // 
             this.detallesToolStripMenuItem.Name = "detallesToolStripMenuItem";
-            this.detallesToolStripMenuItem.Size = new System.Drawing.Size(320, 26);
+            this.detallesToolStripMenuItem.Size = new System.Drawing.Size(342, 26);
             this.detallesToolStripMenuItem.Text = "Detalles";
             this.detallesToolStripMenuItem.Click += new System.EventHandler(this.detallesToolStripMenuItem_Click);
             // 
             // invalidosToolStripMenuItem
             // 
             this.invalidosToolStripMenuItem.Name = "invalidosToolStripMenuItem";
-            this.invalidosToolStripMenuItem.Size = new System.Drawing.Size(320, 26);
+            this.invalidosToolStripMenuItem.Size = new System.Drawing.Size(342, 26);
             this.invalidosToolStripMenuItem.Text = "Inválidos";
             this.invalidosToolStripMenuItem.Click += new System.EventHandler(this.invalidosToolStripMenuItem_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(317, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(339, 6);
             // 
             // conciliacionCsvToolStripMenuItem
             // 
             this.conciliacionCsvToolStripMenuItem.Name = "conciliacionCsvToolStripMenuItem";
-            this.conciliacionCsvToolStripMenuItem.Size = new System.Drawing.Size(320, 26);
+            this.conciliacionCsvToolStripMenuItem.Size = new System.Drawing.Size(342, 26);
             this.conciliacionCsvToolStripMenuItem.Text = "Conciliación Estado de Cuenta (CSV)...";
             this.conciliacionCsvToolStripMenuItem.Click += new System.EventHandler(this.conciliacionCsvToolStripMenuItem_Click);
+            // 
+            // ayudaToolStripMenuItem
+            // 
+            this.ayudaToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.buscarActualizacionesToolStripMenuItem});
+            this.ayudaToolStripMenuItem.Name = "ayudaToolStripMenuItem";
+            this.ayudaToolStripMenuItem.Size = new System.Drawing.Size(65, 24);
+            this.ayudaToolStripMenuItem.Text = "Ayuda";
+            // 
+            // buscarActualizacionesToolStripMenuItem
+            // 
+            this.buscarActualizacionesToolStripMenuItem.Name = "buscarActualizacionesToolStripMenuItem";
+            this.buscarActualizacionesToolStripMenuItem.Size = new System.Drawing.Size(260, 26);
+            this.buscarActualizacionesToolStripMenuItem.Text = "🔄 Buscar Actualizaciones...";
+            this.buscarActualizacionesToolStripMenuItem.Click += new System.EventHandler(this.buscarActualizacionesToolStripMenuItem_Click);
             // 
             // panelTop
             // 
@@ -125,7 +143,7 @@ namespace WindowsFormsApp1
             this.panelTop.Controls.Add(this.txtRutaExcel);
             this.panelTop.Controls.Add(this.btnComparar);
             this.panelTop.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panelTop.Location = new System.Drawing.Point(0, 48);
+            this.panelTop.Location = new System.Drawing.Point(0, 28);
             this.panelTop.Name = "panelTop";
             this.panelTop.Size = new System.Drawing.Size(1182, 100);
             this.panelTop.TabIndex = 1;
@@ -162,22 +180,6 @@ namespace WindowsFormsApp1
             this.txtRutaCarpeta.ReadOnly = true;
             this.txtRutaCarpeta.Size = new System.Drawing.Size(490, 22);
             this.txtRutaCarpeta.TabIndex = 2;
-            // 
-            // btnArreglarFallos
-            // 
-            this.btnArreglarFallos.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnArreglarFallos.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(40)))), ((int)(((byte)(167)))), ((int)(((byte)(69)))));
-            this.btnArreglarFallos.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnArreglarFallos.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnArreglarFallos.ForeColor = System.Drawing.Color.White;
-            this.btnArreglarFallos.Location = new System.Drawing.Point(506, -9);
-            this.btnArreglarFallos.Name = "btnArreglarFallos";
-            this.btnArreglarFallos.Size = new System.Drawing.Size(155, 30);
-            this.btnArreglarFallos.TabIndex = 4;
-            this.btnArreglarFallos.Text = "🛠️ Arreglar fallos";
-            this.btnArreglarFallos.UseVisualStyleBackColor = false;
-            this.btnArreglarFallos.Visible = false;
-            this.btnArreglarFallos.Click += new System.EventHandler(this.btnArreglarFallos_Click);
             // 
             // btnIniciar
             // 
@@ -235,6 +237,22 @@ namespace WindowsFormsApp1
             this.btnComparar.UseVisualStyleBackColor = false;
             this.btnComparar.Click += new System.EventHandler(this.btnComparar_Click);
             // 
+            // btnArreglarFallos
+            // 
+            this.btnArreglarFallos.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnArreglarFallos.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(40)))), ((int)(((byte)(167)))), ((int)(((byte)(69)))));
+            this.btnArreglarFallos.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnArreglarFallos.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnArreglarFallos.ForeColor = System.Drawing.Color.White;
+            this.btnArreglarFallos.Location = new System.Drawing.Point(1538, -9);
+            this.btnArreglarFallos.Name = "btnArreglarFallos";
+            this.btnArreglarFallos.Size = new System.Drawing.Size(155, 30);
+            this.btnArreglarFallos.TabIndex = 4;
+            this.btnArreglarFallos.Text = "🛠️ Arreglar fallos";
+            this.btnArreglarFallos.UseVisualStyleBackColor = false;
+            this.btnArreglarFallos.Visible = false;
+            this.btnArreglarFallos.Click += new System.EventHandler(this.btnArreglarFallos_Click);
+            // 
             // panelBottom
             // 
             this.panelBottom.Controls.Add(this.lblEstado);
@@ -268,7 +286,7 @@ namespace WindowsFormsApp1
             // splitContainer1
             // 
             this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer1.Location = new System.Drawing.Point(0, 173);
+            this.splitContainer1.Location = new System.Drawing.Point(0, 128);
             this.splitContainer1.Name = "splitContainer1";
             this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
             // 
@@ -284,6 +302,9 @@ namespace WindowsFormsApp1
             this.splitContainer1.Panel2.Controls.Add(this.gridInvalidas);
             this.splitContainer1.Panel2.Controls.Add(this.lblInvalidas);
             this.splitContainer1.Panel2.Padding = new System.Windows.Forms.Padding(12, 0, 12, 6);
+            this.splitContainer1.Size = new System.Drawing.Size(1182, 520);
+            this.splitContainer1.SplitterDistance = 260;
+            this.splitContainer1.TabIndex = 0;
             // 
             // gridValidas
             // 
@@ -296,7 +317,7 @@ namespace WindowsFormsApp1
             this.gridValidas.ReadOnly = true;
             this.gridValidas.RowHeadersWidth = 51;
             this.gridValidas.RowTemplate.Height = 24;
-            this.gridValidas.Size = new System.Drawing.Size(1454, 281);
+            this.gridValidas.Size = new System.Drawing.Size(1158, 230);
             this.gridValidas.TabIndex = 7;
             // 
             // lblValidas
@@ -306,7 +327,7 @@ namespace WindowsFormsApp1
             this.lblValidas.ForeColor = System.Drawing.Color.Green;
             this.lblValidas.Location = new System.Drawing.Point(12, 0);
             this.lblValidas.Name = "lblValidas";
-            this.lblValidas.Size = new System.Drawing.Size(1454, 24);
+            this.lblValidas.Size = new System.Drawing.Size(1158, 24);
             this.lblValidas.TabIndex = 6;
             this.lblValidas.Text = "Facturas Válidas (0)";
             this.lblValidas.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -322,7 +343,7 @@ namespace WindowsFormsApp1
             this.gridInvalidas.ReadOnly = true;
             this.gridInvalidas.RowHeadersWidth = 51;
             this.gridInvalidas.RowTemplate.Height = 24;
-            this.gridInvalidas.Size = new System.Drawing.Size(1454, 293);
+            this.gridInvalidas.Size = new System.Drawing.Size(1158, 226);
             this.gridInvalidas.TabIndex = 9;
             // 
             // lblInvalidas
@@ -332,7 +353,7 @@ namespace WindowsFormsApp1
             this.lblInvalidas.ForeColor = System.Drawing.Color.Red;
             this.lblInvalidas.Location = new System.Drawing.Point(12, 0);
             this.lblInvalidas.Name = "lblInvalidas";
-            this.lblInvalidas.Size = new System.Drawing.Size(1454, 24);
+            this.lblInvalidas.Size = new System.Drawing.Size(1158, 24);
             this.lblInvalidas.TabIndex = 8;
             this.lblInvalidas.Text = "Facturas Inválidas / Inconsistencias (0)";
             this.lblInvalidas.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -401,5 +422,7 @@ namespace WindowsFormsApp1
         private System.Windows.Forms.Button btnSeleccionarExcel;
         private System.Windows.Forms.TextBox txtRutaExcel;
         private System.Windows.Forms.Button btnComparar;
+        private System.Windows.Forms.ToolStripMenuItem ayudaToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem buscarActualizacionesToolStripMenuItem;
     }
 }

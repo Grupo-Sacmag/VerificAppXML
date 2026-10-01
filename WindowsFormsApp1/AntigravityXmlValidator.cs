@@ -300,19 +300,19 @@ namespace WindowsFormsApp1
                 if (teniaBasuraAlInicio)
                 {
                     resultado.EsValido = "NO (Requiere Limpieza)";
-                    resultado.Diagnostico = "🟡 NO MANIPULADO (Contiene texto basura al inicio o;? pero la firma es genuina)";
+                    resultado.Diagnostico = "NO MANIPULADO (Contiene texto basura al inicio o;? pero la firma es genuina)";
                     resultado.DetalleError = "Limpiar los caracteres antes de <?xml...>";
                 }
                 else if (!tienePdf)
                 {
                     resultado.EsValido = "NO (Inconsistencia)";
-                    resultado.Diagnostico = "🟡 INCONSISTENCIA DE DOCUMENTOS (Firma 100% válida pero no se encontró el PDF correlacionado)";
+                    resultado.Diagnostico = "INCONSISTENCIA DE DOCUMENTOS (Firma 100% válida pero no se encontró el PDF correlacionado)";
                     resultado.DetalleError = "Falta el archivo PDF correlacionado en la carpeta.";
                 }
                 else
                 {
                     resultado.EsValido = "SÍ";
-                    resultado.Diagnostico = "🟢 VÁLIDO Y AUTÉNTICO";
+                    resultado.Diagnostico = "VÁLIDO Y AUTÉNTICO";
                     resultado.DetalleError = "OK";
                 }
                 return resultado;
