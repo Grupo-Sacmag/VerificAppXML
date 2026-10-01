@@ -20,6 +20,12 @@ namespace WindowsFormsApp1
         public Form1()
         {
             InitializeComponent();
+            try
+            {
+                string iconPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "app_icon.ico");
+                if (File.Exists(iconPath)) this.Icon = new Icon(iconPath);
+            }
+            catch { }
             _validador = new AntigravityXmlValidator();
 
             if (comboBox1.Items.Count > 0)
@@ -27,6 +33,23 @@ namespace WindowsFormsApp1
                 comboBox1.SelectedIndex = 0;
                 _indiceAnteriorCombo = 0;
             }
+
+            gridValidas.KeyDown += Grid_KeyDown;
+            gridValidas.CellDoubleClick += Grid_CellDoubleClick;
+            gridInvalidas.KeyDown += Grid_KeyDown;
+            gridInvalidas.CellDoubleClick += Grid_CellDoubleClick;
+            txtRutaCarpeta.KeyDown += TxtRutaCarpeta_KeyDown;
+
+            //FormConciliacionCsv.HabilitarDobleBuffer(gridValidas);
+            //FormConciliacionCsv.HabilitarDobleBuffer(gridInvalidas);
+
+            TemaGamerEmpresarial.AplicarTema(this);
+            lblValidas.ForeColor = TemaGamerEmpresarial.VerdeNeon;
+            lblInvalidas.ForeColor = TemaGamerEmpresarial.RojoLaser;
+            panelTop.BackColor = TemaGamerEmpresarial.FondoPanel;
+            panelBottom.BackColor = TemaGamerEmpresarial.FondoPanel;
+
+            AutoActualizadorGitHub.VerificarAlIniciar(this);
         }
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
@@ -277,6 +300,14 @@ namespace WindowsFormsApp1
             }
         }
 
+        private void conciliacionCsvToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            using (var frm = new FormConciliacionCsv())
+            {
+                frm.ShowDialog(this);
+            }
+        }
+
         private void btnArreglarFallos_Click(object sender, EventArgs e)
         {
         }
@@ -287,6 +318,75 @@ namespace WindowsFormsApp1
 
         private void btnComparar_Click(object sender, EventArgs e)
         {
+        }
+
+        private void Grid_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                e.Handled = true;
+                e.SuppressKeyPress = true;
+                AbrirRutaSeleccionada(sender as DataGridView);
+            }
+        }
+
+        private void Grid_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex >= 0)
+            {
+                AbrirRutaSeleccionada(sender as DataGridView);
+            }
+        }
+
+        private void TxtRutaCarpeta_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                e.Handled = true;
+                e.SuppressKeyPress = true;
+                AbrirRutaDocumento(txtRutaCarpeta.Text.Trim());
+            }
+        }
+
+        private void AbrirRutaSeleccionada(DataGridView grid)
+        {
+            if (grid == null || grid.CurrentRow == null) return;
+
+            var resultado = grid.CurrentRow.DataBoundItem as ResultadoValidacion;
+            if (resultado != null && !string.IsNullOrEmpty(resultado.RutaXml))
+            {
+                AbrirRutaDocumento(resultado.RutaXml);
+            }
+        }
+
+        private void AbrirRutaDocumento(string ruta)
+        {
+            if (string.IsNullOrWhiteSpace(ruta)) return;
+
+            try
+            {
+                if (File.Exists(ruta))
+                {
+                    System.Diagnostics.Process.Start("explorer.exe", $"/select,\"{ruta}\"");
+                }
+                else if (Directory.Exists(ruta))
+                {
+                    System.Diagnostics.Process.Start("explorer.exe", $"\"{ruta}\"");
+                }
+                else
+                {
+                    MessageBox.Show($"La ruta especificada no existe o no está disponible:\n{ruta}", "Ruta no encontrada", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ocurrió un error al abrir la ruta: {ex.Message}", "Error al abrir", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private async void buscarActualizacionesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            await AutoActualizadorGitHub.VerificarManualmenteAsync(this);
         }
     }
 }
